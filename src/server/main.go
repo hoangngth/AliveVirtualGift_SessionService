@@ -8,7 +8,6 @@ import (
 	"os"
 	"os/signal"
 
-	"github.com/go-redis/redis"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/joho/godotenv"
 	"google.golang.org/grpc"
@@ -16,30 +15,19 @@ import (
 	"AliveVirtualGift_SessionService/src/database"
 	"AliveVirtualGift_SessionService/src/proto"
 	"AliveVirtualGift_SessionService/src/service"
+	"AliveVirtualGift_SessionService/src/utils"
 )
-
-var client *redis.Client
 
 func init() {
 
+	var err error
 	// Load environment
-	err := godotenv.Load(".env")
+	err = godotenv.Load(".env")
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
 
-	//Initializing redis
-	dsn := os.Getenv("REDIS_DSN")
-	if len(dsn) == 0 {
-		dsn = "localhost:6379"
-	}
-	client = redis.NewClient(&redis.Options{
-		Addr: dsn, //redis port
-	})
-	_, err := client.Ping().Result()
-	if err != nil {
-		panic(err)
-	}
+	utils.InitRedis()
 }
 
 func main() {

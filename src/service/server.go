@@ -38,8 +38,21 @@ func (s *serviceServer) GetAccountTypeFromToken(ctx context.Context, request *pr
 	}, nil
 }
 
-func (s *serviceServer) CreateToken(ctx context.Context, request *proto.Payload) (*proto.TokenString, error) {
-	return nil, nil
+func (s *serviceServer) CreateToken(ctx context.Context, request *proto.AccountInfo) (*proto.TokenString, error) {
+
+	td, err := utils.GenerateToken(request)
+	if err != nil {
+		return nil, err
+	}
+
+	err = utils.CreateAuth(request.GetId(), td)
+	if err != nil {
+		return nil, err
+	}
+
+	return &proto.TokenString{
+		Token: td.AccessToken,
+	}, nil
 }
 
 func (s *serviceServer) RefreshToken(ctx context.Context, request *proto.TokenString) (*proto.TokenString, error) {
@@ -47,5 +60,9 @@ func (s *serviceServer) RefreshToken(ctx context.Context, request *proto.TokenSt
 }
 
 func (s *serviceServer) DeleteToken(ctx context.Context, request *proto.TokenString) (*proto.Status, error) {
+	return nil, nil
+}
+
+func (s *serviceServer) CheckToken(ctx context.Context, request *proto.TokenString) (*proto.Status, error) {
 	return nil, nil
 }
