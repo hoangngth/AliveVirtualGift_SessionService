@@ -45,3 +45,7 @@ func (s *serviceServer) CreateToken(ctx context.Context, request *proto.Payload)
 func (s *serviceServer) RefreshToken(ctx context.Context, request *proto.TokenString) (*proto.TokenString, error) {
 	return nil, nil
 }
+
+func (s *serviceServer) DeleteToken(ctx context.Context, request *proto.TokenString) (*proto.Status, error) {
+	return nil, nil
+}
