@@ -36,4 +36,5 @@ service SessionService {
     rpc CreateToken (Payload) returns (TokenString);
     rpc RefreshToken (TokenString) returns (TokenString);
     rpc DeleteToken (TokenString) returns (Status);
+    rpc CheckToken (TokenString) returns (Status);
 }
