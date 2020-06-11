@@ -3,7 +3,6 @@ package auth
 import (
 	"AliveVirtualGift_SessionService/src/proto"
 	"fmt"
-	"log"
 	"os"
 	"strconv"
 	"time"
@@ -46,7 +45,7 @@ func InitRedis() {
 func GenerateToken(accInfo *proto.AccountInfo) (*TokenDetails, error) {
 
 	td := &TokenDetails{}
-	td.AtExpires = time.Now().Add(time.Minute * 15).Unix()
+	td.AtExpires = time.Now().Add(time.Minute * 60).Unix()
 	td.AccessUUID = uuid.New().String()
 
 	var err error
@@ -54,7 +53,8 @@ func GenerateToken(accInfo *proto.AccountInfo) (*TokenDetails, error) {
 	atClaims := jwt.MapClaims{}
 	atClaims["authorized"] = true
 	atClaims["access_uuid"] = td.AccessUUID
-	atClaims["account_info"] = accInfo
+	atClaims["account_id"] = accInfo.GetId()
+	atClaims["account_type"] = proto.Type_value[string(accInfo.GetType())]
 	atClaims["exp"] = td.AtExpires
 	at := jwt.NewWithClaims(jwt.SigningMethodHS256, atClaims)
 	td.AccessToken, err = at.SignedString([]byte(os.Getenv("ACCESS_SECRET")))
@@ -120,22 +120,20 @@ func ExtractTokenMetadata(tokenString string) (*AccessDetails, error) {
 		return nil, err
 	}
 
-	accInfo := claims["account_info"]
-	accInfoMap, ok := accInfo.(map[string]interface{})
-	if !ok {
-		log.Print("Payload Conversion failed")
+	accountID, err := strconv.ParseUint(fmt.Sprintf("%.f", claims["account_id"]), 10, 64)
+	if err != nil {
+		return nil, err
 	}
 
-	accInfoMap["id"] = uint64(accInfoMap["id"].(float64))
-	accountID := accInfoMap["id"].(uint64)
-
-	accInfoMap["type"] = int32(accInfoMap["type"].(float64))
-	accountType := proto.Type(accInfoMap["type"].(int32))
+	accountType, err := strconv.ParseInt(fmt.Sprintf("%.f", claims["account_id"]), 10, 32)
+	if err != nil {
+		return nil, err
+	}
 
 	return &AccessDetails{
 		AccessUUID:  accessUUID,
 		AccountID:   accountID,
-		AccountType: accountType,
+		AccountType: proto.Type(accountType),
 	}, nil
 }
 

@@ -27,12 +27,12 @@ func (s *serviceServer) GetAccountIDFromToken(ctx context.Context, request *prot
 
 	_, authErr := auth.FetchAuth(tokenMetadata)
 	if authErr != nil {
-		return &proto.AccountID{
-			Id: tokenMetadata.AccountID,
-		}, nil
+		return nil, authErr
 	}
 
-	return nil, authErr
+	return &proto.AccountID{
+		Id: tokenMetadata.AccountID,
+	}, nil
 }
 
 func (s *serviceServer) GetAccountTypeFromToken(ctx context.Context, request *proto.TokenString) (*proto.AccountType, error) {
@@ -44,12 +44,12 @@ func (s *serviceServer) GetAccountTypeFromToken(ctx context.Context, request *pr
 
 	_, authErr := auth.FetchAuth(tokenMetadata)
 	if authErr != nil {
-		return &proto.AccountType{
-			Type: tokenMetadata.AccountType,
-		}, nil
+		return nil, authErr
 	}
 
-	return nil, authErr
+	return &proto.AccountType{
+		Type: tokenMetadata.AccountType,
+	}, nil
 }
 
 func (s *serviceServer) CreateToken(ctx context.Context, request *proto.AccountInfo) (*proto.TokenString, error) {
