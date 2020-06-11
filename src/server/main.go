@@ -12,10 +12,10 @@ import (
 	"github.com/joho/godotenv"
 	"google.golang.org/grpc"
 
+	"AliveVirtualGift_SessionService/src/auth"
 	"AliveVirtualGift_SessionService/src/database"
 	"AliveVirtualGift_SessionService/src/proto"
 	"AliveVirtualGift_SessionService/src/service"
-	"AliveVirtualGift_SessionService/src/utils"
 )
 
 func init() {
@@ -27,7 +27,7 @@ func init() {
 		log.Fatal("Error loading .env file")
 	}
 
-	utils.InitRedis()
+	auth.InitRedis()
 }
 
 func main() {
