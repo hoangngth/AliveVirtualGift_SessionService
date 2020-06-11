@@ -32,10 +32,11 @@ func init() {
 
 func main() {
 
-	listener, err := net.Listen("tcp", ":8000")
+	listener, err := net.Listen("tcp", ":"+os.Getenv("SESSION_SERVICE_PORT"))
 	if err != nil {
 		panic(err)
 	}
+	log.Print("Session Service running on port :" + os.Getenv("SESSION_SERVICE_PORT"))
 
 	var newdb database.DBInfo
 	db, err := newdb.GetDB()
